@@ -1,4 +1,4 @@
-import pool from "../server.js";
+import pool from "../Database/db.js";
 import bcrypt from "bcryptjs";
 import generateTokenAndSetCookie from "../utils/generateToken.js";
 
@@ -244,14 +244,15 @@ export const getCurrentUser = async (req, res) => {
     }
 
     res.json({
-      user_id,
+      userID: user_id,
+      user_id: user_id, // Include both for backward compatibility
       username: req.user.username,
       email: req.user.email,
       role_name,
       ...additionalData,
     });
   } catch (error) {
-    console.error("Error in getCurrentUser:", error);
+    console.error("Error fetching current user:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };

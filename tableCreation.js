@@ -337,6 +337,17 @@ const createLogTriggers = async (p) => {
   await p.query("DROP TABLE IF EXISTS global_variables;");
 };
 
+const createMessagesTable = `
+  CREATE TABLE IF NOT EXISTS messages (
+    id SERIAL PRIMARY KEY,
+    from_user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    to_user_id INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    read BOOLEAN DEFAULT false
+  );
+`;
+
 const createTables = async (p) => {
   try {
     const rolesTableQuery = await createRolesTable();
@@ -369,6 +380,7 @@ const createTables = async (p) => {
     await p.query(ContestTableQuery);
     await p.query(RegistrationTableQuery);
     await p.query(UserLogTable);
+    await p.query(createMessagesTable);
 
     //await p.query(alterEventsTableQuery);
     //await p.query("ALTER TABLE society ALTER COLUMN image_url TYPE VARCHAR(255);");
