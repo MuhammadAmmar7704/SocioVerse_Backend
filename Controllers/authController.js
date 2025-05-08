@@ -120,16 +120,18 @@ export const login = async (req, res) => {
       return res.status(400).json({ error: "Please fill all the fields" });
     }
 
+    
     const query =
-      "SELECT * FROM users u join roles r on u.role_id = r.role_id WHERE email = $1";
+    "SELECT * FROM users u join roles r on u.role_id = r.role_id WHERE email = $1";
     const data = [email];
-
+    
     const confirm = await pool.query(query, data);
     const { rows } = confirm;
-
+    
     if (rows.length === 0) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
+    // console.log("here")
 
     const [user] = rows;
     const {
@@ -147,8 +149,9 @@ export const login = async (req, res) => {
       return res.status(401).json({ error: "Invalid Password" });
     }
 
-    generateTokenAndSetCookie(id, role_id, role_name, res);
+    const token = generateTokenAndSetCookie(id, role_id, role_name, res);
 
+    console.log("here")
     // Handle University_Head
     if (role_name === "University_Head") {
       const uni_id = await pool.query(
@@ -158,7 +161,7 @@ export const login = async (req, res) => {
       const university_id = uni_id.rows[0]?.university_id;
       return res
         .status(200)
-        .json({ id, user_username, user_email, role_name, university_id });
+        .json({ id, user_username, user_email, role_name, university_id, token });
     }
 
     // Handle Society_Head
@@ -170,11 +173,11 @@ export const login = async (req, res) => {
       const society_id = soc_id.rows[0]?.society_id;
       return res
         .status(200)
-        .json({ id, user_username, user_email, role_name, society_id });
+        .json({ id, user_username, user_email, role_name, society_id,token });
     }
 
     // Handle Super_Admin and other roles
-    return res.status(200).json({ id, user_username, user_email, role_name });
+    return res.status(200).json({ id, user_username, user_email, role_name, token });
   } catch (error) {
     console.error("Login error:", error);
     return res.status(500).json({ error: "Internal Server Error" });
