@@ -50,7 +50,7 @@ export default function () {
     'GET contests': http.get(`${BASE_URL}/api/contest/2`, authHeaders),
     'GET events': http.get(`${BASE_URL}/api/event/getallevent`, authHeaders),
     'GET societies': http.get(`${BASE_URL}/api/society/getallsociety`, authHeaders),
-    'GET universities': http.get(`${BASE_URL}/api/university/getalluniversity`),
+    'GET universities': http.get(`${BASE_URL}/api/university/getalluniversity`, authHeaders),
   };
 
   // Verify all responses
